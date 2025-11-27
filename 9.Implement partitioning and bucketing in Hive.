@@ -1,0 +1,90 @@
+partitioning_bucketing.py
+import pandas as pd
+import os
+data = {
+    'emp_id': [1, 2, 3, 4, 5, 6, 7, 8],
+    'emp_name': ['Alice', 'Bob', 'Charlie', 'David', 'Emma', 'Frank', 'Grace', 'Henry'],
+    'dept': ['IT', 'HR', 'IT', 'Finance', 'Finance', 'HR', 'IT', 'Finance'],
+    'salary': [55000, 48000, 62000, 75000, 80000, 50000, 70000, 90000],
+    'year': [2023, 2023, 2024, 2024, 2023, 2023, 2024, 2024]
+}
+df = pd.DataFrame(data)
+print("Full Table:\n", df)
+os.makedirs("output/partitions", exist_ok=True)
+print("\n Creating Partitions by YEAR...\n")
+for year, group in df.groupby('year'):
+    folder = f"output/partitions/year={year}"
+    os.makedirs(folder, exist_ok=True)
+    file_path = os.path.join(folder, "employee_data.csv")
+    group.to_csv(file_path, index=False)
+    print(f"Partition created for year={year} with {len(group)} records → {file_path}")
+print("\n Creating Buckets (2 per partition)...\n")
+def create_buckets(df, num_buckets, base_path):
+    for i in range(num_buckets):
+        bucket = df.iloc[i::num_buckets]
+        bucket_file = os.path.join(base_path, f"bucket_{i+1}.csv")
+        bucket.to_csv(bucket_file, index=False)
+        print(f"Created {bucket_file} ({len(bucket)} rows)")
+for year in df['year'].unique():
+part_path = f"output/partitions/year={year}"
+    partition_df = df[df['year'] == year]
+    create_buckets(partition_df, 2, part_path)
+print("\n Query 1: Employees in IT Department (like WHERE dept='IT')")
+print(df[df['dept'] == 'IT'])
+
+print("\n Query 2: Average Salary by Department (GROUP BY dept)")
+print(df.groupby('dept')['salary'].mean())
+
+print("\n Query 3: Average Salary by Year (GROUP BY year)")
+print(df.groupby('year')['salary'].mean())
+
+
+
+
+
+
+
+Output
+Full Table:
+    emp_id emp_name     dept  salary  year
+0       1    Alice       IT   55000  2023
+1       2      Bob       HR   48000  2023
+2       3  Charlie       IT   62000  2024
+3       4    David  Finance   75000  2024
+4       5     Emma  Finance   80000  2023
+5       6    Frank       HR   50000  2023
+6       7    Grace       IT   70000  2024
+7       8    Henry  Finance   90000  2024
+
+ Creating Partitions by YEAR...
+
+Partition created for year=2023 with 4 records → output/partitions/year=2023\employee_data.csv
+Partition created for year=2024 with 4 records → output/partitions/year=2024\employee_data.csv
+
+ Creating Buckets (2 per partition)...
+
+Created output/partitions/year=2023\bucket_1.csv (2 rows)
+Created output/partitions/year=2023\bucket_2.csv (2 rows)
+Created output/partitions/year=2024\bucket_1.csv (2 rows)
+Created output/partitions/year=2024\bucket_2.csv (2 rows)
+
+ Query 1: Employees in IT Department (like WHERE dept='IT')
+   emp_id emp_name dept  salary  year
+0       1    Alice   IT   55000  2023
+2       3  Charlie   IT   62000  2024
+6       7    Grace   IT   70000  2024
+
+ Query 2: Average Salary by Department (GROUP BY dept)
+dept
+Finance    81666.666667
+HR         49000.000000
+IT         62333.333333
+Name: salary, dtype: float64
+
+ Query 3: Average Salary by Year (GROUP BY year)
+year
+2023    58250.0
+2024    74250.0
+Name: salary, dtype: float64
+
+
