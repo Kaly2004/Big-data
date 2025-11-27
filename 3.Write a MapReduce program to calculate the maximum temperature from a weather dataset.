@@ -1,0 +1,45 @@
+max_temperature.py
+from collections import defaultdict
+def mapper(line):
+    fields = line.strip().split(",")
+    if len(fields) >= 4:
+        station = fields[0]
+        element = fields[2]
+        value = fields[3]
+        if element == "TMAX":
+            yield (station, float(value))
+def reducer(mapped_data):
+    max_temps = defaultdict(float)
+    for station, temp in mapped_data:
+        if station not in max_temps or temp > max_temps[station]:
+            max_temps[station] = temp
+    return max_temps
+if __name__ == "__main__":
+    lines = [
+        "STATION1,20210101,TMAX,35",
+        "STATION1,20210101,TMIN,22",
+        "STATION1,20210102,TMAX,40",
+        "STATION2,20210101,TMAX,33",
+        "STATION2,20210101,TMIN,21",
+        "STATION2,20210102,TMAX,36"
+    ]
+    mapped_data = []
+    for line in lines:
+        mapped_data.extend(mapper(line))
+    result = reducer(mapped_data)
+    print("Maximum Temperature for Each Station:\n")
+    for station, temp in result.items():
+        print(f"{station}: {temp}°C")
+
+
+
+
+
+
+
+
+
+Output:
+Maximum Temperature for Each Station:
+STATION1: 40.0°C
+STATION2: 36.0°C
