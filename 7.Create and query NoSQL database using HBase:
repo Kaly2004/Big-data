@@ -1,0 +1,60 @@
+Create and query NoSQL database using HBase:
+# Step 1: Start HBase shell
+hbase shell
+# Step 2: Create a table named 'student' with a column family 'details'
+create 'student', 'details'
+# Step 3: Insert records into the table
+put 'student', '1', 'details:name', 'Alice'
+put 'student', '1', 'details:dept', 'CSE'
+put 'student', '2', 'details:name', 'Bob'
+put 'student', '2', 'details:dept', 'ECE'
+put 'student', '3', 'details:name', 'Carol'
+put 'student', '3', 'details:dept', 'IT'
+# Step 4: Retrieve a single record
+get 'student', '2'
+# Step 5: Display all records
+scan 'student'
+# Step 6: Delete a record (optional)
+deleteall 'student', '3'
+# Step 7: Disable and drop the table (optional)
+disable 'student'
+drop 'student'
+
+
+
+
+
+
+
+
+Output:
+hbase(main):001:0> create 'student', 'details'
+0 row(s) in 1.1230 seconds
+=> Hbase::Table - student
+hbase(main):002:0> put 'student', '1', 'details:name', 'Alice'
+0 row(s) in 0.1270 seconds
+hbase(main):003:0> put 'student', '1', 'details:dept', 'CSE'
+0 row(s) in 0.1210 seconds
+hbase(main):004:0> put 'student', '2', 'details:name', 'Bob'
+0 row(s) in 0.1020 seconds
+hbase(main):005:0> put 'student', '2', 'details:dept', 'ECE'
+0 row(s) in 0.0990 seconds
+hbase(main):006:0> put 'student', '3', 'details:name', 'Carol'
+0 row(s) in 0.1080 seconds
+hbase(main):007:0> put 'student', '3', 'details:dept', 'IT'
+0 row(s) in 0.1030 seconds
+hbase(main):008:0> get 'student', '2'
+COLUMN                 CELL
+ details:dept          timestamp=20251103121505, value=ECE
+ details:name          timestamp=20251103121459, value=Bob
+1 row(s) in 0.0260 seconds
+hbase(main):009:0> scan 'student'
+ROW    COLUMN+CELL
+ 1     column=details:dept, timestamp=20251103121458, value=CSE
+       column=details:name, timestamp=20251103121457, value=Alice
+ 2     column=details:dept, timestamp=20251103121505, value=ECE
+       column=details:name, timestamp=20251103121459, value=Bob
+ 3     column=details:dept, timestamp=20251103121509, value=IT
+       column=details:name, timestamp=20251103121508, value=Carol
+3 row(s) in 0.0310 seconds
+
