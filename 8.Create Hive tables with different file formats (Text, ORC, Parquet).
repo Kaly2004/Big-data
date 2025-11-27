@@ -1,0 +1,51 @@
+hive_simulation.py
+import pandas as pd
+data = {
+    'emp_id': [1, 2, 3, 4],
+    'emp_name': ['Alice', 'Bob', 'Charlie', 'David'],
+    'dept': ['IT', 'HR', 'IT', 'Finance'],
+    'salary': [55000, 48000, 62000, 75000]
+}
+employee_df = pd.DataFrame(data)
+print("Hive-like TABLE created:\n")
+print(employee_df)
+employee_df.to_csv("employee_text.csv", index=False)
+print("\n Saved as TEXTFILE format → employee_text.csv")
+employee_df.to_parquet("employee_parquet.parquet")
+print(" Saved as PARQUET format → employee_parquet.parquet")
+employee_df.to_json("employee_orc.json", orient='records', lines=True)
+print("Saved as ORC (simulated via JSON) → employee_orc.json")
+print("\n Query 1: Employees in IT Department")
+print(employee_df[employee_df['dept'] == 'IT'])
+print("\n Query 2: Average Salary")
+print(employee_df['salary'].mean())
+print("\n Query 3: Department-wise Average Salary")
+print(employee_df.groupby('dept')['salary'].mean())
+
+
+
+
+
+Output
+Hive-like TABLE created:
+   emp_id emp_name     dept  salary
+0       1    Alice       IT   55000
+1       2      Bob       HR   48000
+2       3  Charlie       IT   62000
+3       4    David  Finance   75000
+Saved as TEXTFILE format → employee_text.csv
+Saved as PARQUET format → employee_parquet.parquet
+Saved as ORC (simulated via JSON) → employee_orc.json
+ Query 1: Employees in IT Department
+   emp_id emp_name dept  salary
+0       1    Alice   IT   55000
+2       3  Charlie   IT   62000
+Query 2: Average Salary
+60000.0
+Query 3: Department-wise Average Salary
+dept
+Finance    75000.0
+HR         48000.0
+IT         58500.0
+Name: salary, dtype: float64
+
