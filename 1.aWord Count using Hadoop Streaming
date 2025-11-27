@@ -1,0 +1,36 @@
+from collections import Counter
+text = """
+Big data means large volumes of data.
+Python is a powerful tool for big data analysis.
+Data analysis helps extract insights from big data.
+"""
+words = text.lower().split()
+word_count = Counter(words)
+print("Word Count Results:\n")
+for word, count in word_count.items():
+    print(f"{word}: {count}")
+
+
+
+Output:
+
+Word Count Results:
+big: 3
+data: 3
+means: 1
+large: 1
+volumes: 1
+of: 1
+data.: 2
+python: 1
+is: 1
+a: 1
+powerful: 1
+tool: 1
+for: 1
+analysis.: 1
+analysis: 1
+helps: 1
+extract: 1
+insights: 1
+from: 1
