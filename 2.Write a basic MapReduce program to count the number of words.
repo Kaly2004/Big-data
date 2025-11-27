@@ -1,0 +1,36 @@
+mapreduce.py
+from collections import defaultdict
+def mapper(line):
+    return [(word.lower(), 1) for word in line.strip().split()]
+def reducer(mapped_data):
+    word_count = defaultdict(int)
+    for word, count in mapped_data:
+        word_count[word] += count
+    return word_count
+lines = [
+    "Big data is powerful",
+    "Python is fun",
+    "Big data is everywhere"
+]
+mapped_data = []
+for line in lines:
+    mapped_data.extend(mapper(line))
+result = reducer(mapped_data)
+print("Word Count Results:\n")
+for word, count in result.items():
+    print(f"{word}: {count}")
+
+
+
+
+Output:
+
+Word Count Results:
+big: 2
+data: 2
+is: 3
+powerful: 1
+python: 1
+fun: 1
+everywhere: 1
+
